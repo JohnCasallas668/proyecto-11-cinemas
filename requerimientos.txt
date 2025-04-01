@@ -1,0 +1,11 @@
+para poder usar el motor de bases de datos y conectarlo al archivo es necesario que se conecte via local
+
+conn = pyodbc.connect(
+            'DRIVER={ODBC Driver 17 for SQL Server};'
+            'SERVER= (localdb)\cinemas3;'
+            'DATABASE=CineReservas;'
+            'UID=sa;'
+            'PWD=1234567;'
+            'TrustServerCertificate=yes;'
+        )
+en el SERVER= se debe modificar a la instancia creada para la visualizacion de este proyecto y el usuario sa ya que no todos tienen la misma contraseña, luego instalar las librerias y extensiones requeridas de python
