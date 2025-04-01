@@ -1,6 +1,6 @@
 # proyecto-11-cinemas 
-Grupo 3
+#Grupo 3
 
-John Casallas
-James Sarmiento
-Filiph Suan
+#John Casallas
+#James Sarmiento
+#Filiph Suan
