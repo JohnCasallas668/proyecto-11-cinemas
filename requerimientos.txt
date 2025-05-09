@@ -1,11 +1,8 @@
-para poder usar el motor de bases de datos y conectarlo al archivo es necesario que se conecte via local
-
-conn = pyodbc.connect(
-            'DRIVER={ODBC Driver 17 for SQL Server};'
-            'SERVER= (localdb)\cinemas3;'
-            'DATABASE=CineReservas;'
-            'UID=sa;'
-            'PWD=1234567;'
-            'TrustServerCertificate=yes;'
-        )
-en el SERVER= se debe modificar a la instancia creada para la visualizacion de este proyecto y el usuario sa ya que no todos tienen la misma contraseña, luego instalar las librerias y extensiones requeridas de python
+Para ver el proyecto es necesario tener las siguientes extensiones:
+Flask==2.3.3
+SQLAlchemy==2.0.20
+pyodbc==4.0.39
+python-dotenv==1.0.0
+Flask-SQLAlchemy==3.1.1
+Flask-Login==0.6.2
+Flask-WTF==1.1.1
