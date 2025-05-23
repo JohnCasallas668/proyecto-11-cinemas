@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}CineApp - Detalles de Transacción{% endblock %}
+
+{% block page_title %}Detalles de Transacción{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-receipt me-2"></i>Transacción #{{ transaction.id }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-success mb-4">
+                    <h5><i class="fas fa-check-circle me-2"></i>Pago Exitoso</h5>
+                    <p class="mb-0">El pago ha sido procesado correctamente. A continuación se muestran los detalles de la transacción.</p>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card border-info mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Información de Transacción</h5>
+                                <hr>
+                                <p><strong>ID de Transacción:</strong> {{ transaction.id }}</p>
+                                <p><strong>ID de Reserva:</strong> {{ transaction.reservation_id }}</p>
+                                <p><strong>Cédula:</strong> {{ transaction.cedula }}</p>
+                                <p><strong>Fecha:</strong> {{ transaction.timestamp.strftime('%d/%m/%Y %H:%M') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-success mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Información de Pago</h5>
+                                <hr>
+                                <p>
+                                    <strong>Método de Pago:</strong> 
+                                    {% if transaction.payment_method == 'Efectivo' %}
+                                        <span class="badge bg-success">Efectivo</span>
+                                    {% else %}
+                                        <span class="badge bg-primary">Tarjeta CINEMAS</span>
+                                    {% endif %}
+                                </p>
+                                <div class="text-center mb-3">
+                                    <h2 class="display-4 text-success">${{ '{:,}'.format(transaction.amount|int) }}</h2>
+                                    <p class="text-muted">Monto Pagado</p>
+                                    {% if transaction.payment_method == 'Tarjeta CINEMAS' %}
+                                        <p class="small text-muted">Incluye 10% de descuento</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card border-primary">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0">Asientos Comprados</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Asiento</th>
+                                        <th>Tipo</th>
+                                        <th>Precio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for seat in transaction.reservation.seats %}
+                                        <tr>
+                                            <td>
+                                                <span class="badge bg-{{ 'success' if seat.seat_type == 'General' else 'primary' }}">
+                                                    {{ seat.row }}{{ seat.number }}
+                                                </span>
+                                            </td>
+                                            <td>{{ seat.seat_type }}</td>
+                                            <td>${{ '{:,}'.format(seat.price|int) }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot class="table-light">
+                                    <tr>
+                                        <th colspan="2">Total</th>
+                                        <th>${{ '{:,}'.format(transaction.amount|int) }}</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Volver
+                    </a>
+                    <a href="{{ url_for('pagos.anular_pago') }}" class="btn btn-danger">
+                        <i class="fas fa-ban me-2"></i>Anular Pago
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

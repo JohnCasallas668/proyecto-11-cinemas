@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}CineApp - Dinero en Caja{% endblock %}
+
+{% block page_title %}Dinero en Caja{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-dark text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-cash-register me-2"></i>Estado de Caja
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card border-success h-100">
+                            <div class="card-body text-center">
+                                <h6 class="card-title text-muted">Efectivo</h6>
+                                <h3 class="display-6 text-success">${{ register.cash_balance }}</h3>
+                                <p class="text-muted">Pagos en efectivo</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-primary h-100">
+                            <div class="card-body text-center">
+                                <h6 class="card-title text-muted">Tarjeta CINEMAS</h6>
+                                <h3 class="display-6 text-primary">${{ register.card_balance }}</h3>
+                                <p class="text-muted">Pagos con tarjeta</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-dark h-100">
+                            <div class="card-body text-center">
+                                <h6 class="card-title text-muted">Total</h6>
+                                <h3 class="display-6 text-dark">${{ (register.cash_balance + register.card_balance) }}</h3>
+                                <p class="text-muted">Ingresos totales</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-info-circle me-2"></i>Información</h5>
+                    <p>Este reporte muestra el dinero total recaudado en la caja del cine.</p>
+                    <ul>
+                        <li><strong>Efectivo:</strong> Representa el total de pagos realizados en efectivo.</li>
+                        <li><strong>Tarjeta CINEMAS:</strong> Representa el total de pagos realizados con tarjeta CINEMAS.</li>
+                        <li><strong>Total:</strong> Representa la suma de todos los ingresos.</li>
+                    </ul>
+                    <p class="mb-0">Fecha de consulta: {{ now().strftime('%d/%m/%Y %H:%M') }}</p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Volver
+                    </a>
+                    <button class="btn btn-primary" onclick="window.print()">
+                        <i class="fas fa-print me-2"></i>Imprimir Reporte
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

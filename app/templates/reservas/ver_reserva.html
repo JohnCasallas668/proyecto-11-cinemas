@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}CineApp - Detalles de Reserva{% endblock %}
+
+{% block page_title %}Detalles de Reserva{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-ticket-alt me-2"></i>Reserva #{{ reserva.id }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card border-info mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Información de Reserva</h5>
+                                <hr>
+                                <p><strong>ID de Reserva:</strong> {{ reserva.id }}</p>
+                                <p><strong>Cédula:</strong> {{ reserva.cedula }}</p>
+                                <p><strong>Fecha de Creación:</strong> {{ reserva.created_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                                <p>
+                                    <strong>Estado de Pago:</strong> 
+                                    {% if reserva.payment_status == 'Pendiente' %}
+                                        <span class="badge bg-warning text-dark">Pendiente</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Pagada</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-success mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Información de Pago</h5>
+                                <hr>
+                                <div class="text-center mb-3">
+                                    <h2 class="display-4 text-success">${{ '{:,}'.format(reserva.total_price|int) }}</h2>
+                                    <p class="text-muted">Total</p>
+                                    <p class="small text-muted">Con tarjeta CINEMAS: ${{ '{:,}'.format(reserva.discounted_price|int) }} (10% descuento)</p>
+                                </div>
+                                {% if reserva.payment_status == 'Pendiente' %}
+                                    <div class="d-grid gap-2">
+                                        <a href="{{ url_for('pagos.realizar_pago') }}" class="btn btn-success">
+                                            <i class="fas fa-money-bill-wave me-2"></i>Realizar Pago
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card border-primary">
+                    <div class="card-header bg-light">
+                        <h5 class="card-title mb-0">Asientos Reservados</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Asiento</th>
+                                        <th>Tipo</th>
+                                        <th>Precio</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for seat in reserva.seats %}
+                                        <tr>
+                                            <td>
+                                                <span class="badge bg-{{ 'success' if seat.seat_type == 'General' else 'primary' }}">
+                                                    {{ seat.row }}{{ seat.number }}
+                                                </span>
+                                            </td>
+                                            <td>{{ seat.seat_type }}</td>
+                                            <td>${{ '{:,}'.format(seat.price|int) }}</td>
+                                            <td>
+                                                {% if seat.status == 'Reservada' %}
+                                                    <span class="badge bg-warning text-dark">Reservada</span>
+                                                {% elif seat.status == 'Vendida' %}
+                                                    <span class="badge bg-success">Vendida</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ seat.status }}</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot class="table-light">
+                                    <tr>
+                                        <th colspan="2">Total</th>
+                                        <th colspan="2">${{ '{:,}'.format(reserva.total_price|int) }}</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Volver
+                    </a>
+                    
+                    {% if reserva.payment_status == 'Pendiente' %}
+                        <div>
+                            <a href="{{ url_for('reservas.cancelar_reserva') }}" class="btn btn-danger me-2">
+                                <i class="fas fa-times-circle me-2"></i>Cancelar Reserva
+                            </a>
+                            <a href="{{ url_for('pagos.realizar_pago') }}" class="btn btn-success">
+                                <i class="fas fa-money-bill-wave me-2"></i>Pagar
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

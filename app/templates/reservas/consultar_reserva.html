@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}CineApp - Consultar Reserva{% endblock %}
+
+{% block page_title %}Consultar Reserva{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-search me-2"></i>Consultar Reserva
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('reservas.consultar_reserva') }}">
+                    <div class="form-group mb-4">
+                        <label for="cedula" class="form-label">Cédula</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Ingrese el número de cédula" required>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Buscar
+                            </button>
+                        </div>
+                        <small class="form-text text-muted">Ingrese la cédula asociada a la reserva que desea consultar.</small>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="{{ url_for('reservas.crear_reserva') }}" class="btn btn-success w-100">
+                            <i class="fas fa-plus-circle me-2"></i>Crear Nueva Reserva
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{{ url_for('pagos.realizar_pago') }}" class="btn btn-primary w-100">
+                            <i class="fas fa-money-bill-wave me-2"></i>Realizar Pago
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

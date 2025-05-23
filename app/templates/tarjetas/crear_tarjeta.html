@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}CineApp - Crear Tarjeta CINEMAS{% endblock %}
+
+{% block page_title %}Crear Tarjeta CINEMAS{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-credit-card me-2"></i>Nueva Tarjeta CINEMAS
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('tarjetas.crear_tarjeta') }}">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.nombre.label(class="form-label") }}
+                                {{ form.nombre(class="form-control" + (" is-invalid" if form.nombre.errors else ""), placeholder="Ingrese el nombre") }}
+                                {% if form.nombre.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.nombre.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                {{ form.apellido.label(class="form-label") }}
+                                {{ form.apellido(class="form-control" + (" is-invalid" if form.apellido.errors else ""), placeholder="Ingrese el apellido") }}
+                                {% if form.apellido.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.apellido.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        {{ form.cedula.label(class="form-label") }}
+                        {{ form.cedula(class="form-control" + (" is-invalid" if form.cedula.errors else ""), placeholder="Ingrese el número de cédula") }}
+                        {% if form.cedula.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.cedula.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">La cédula debe ser única. No pueden existir dos tarjetas con la misma cédula.</small>
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        {{ form.saldo_inicial.label(class="form-label") }}
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            {{ form.saldo_inicial(class="form-control" + (" is-invalid" if form.saldo_inicial.errors else ""), placeholder="70000") }}
+                        </div>
+                        {% if form.saldo_inicial.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.saldo_inicial.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">El saldo inicial debe ser de al menos $70,000.</small>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <div class="alert alert-info mb-0">
+                    <h5><i class="fas fa-info-circle me-2"></i>Información</h5>
+                    <p class="mb-0">La tarjeta CINEMAS le otorga a su dueño un descuento del 10% en sus boletas. Cada tarjeta puede ser recargada una cantidad ilimitada de veces por un monto de $50,000.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

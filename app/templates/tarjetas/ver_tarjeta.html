@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}CineApp - Detalles de Tarjeta CINEMAS{% endblock %}
+
+{% block page_title %}Detalles de Tarjeta CINEMAS{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-credit-card me-2"></i>Tarjeta CINEMAS
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-3 border-info">
+                            <div class="card-body">
+                                <h5 class="card-title">Información Personal</h5>
+                                <hr>
+                                <p><strong>Nombre:</strong> {{ tarjeta.nombre }} {{ tarjeta.apellido }}</p>
+                                <p><strong>Cédula:</strong> {{ tarjeta.cedula }}</p>
+                                <p><strong>Fecha de Creación:</strong> {{ tarjeta.created_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                                <p>
+                                    <strong>Estado:</strong> 
+                                    {% if tarjeta.active %}
+                                        <span class="badge bg-success">Activa</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Inactiva</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-3 border-success">
+                            <div class="card-body">
+                                <h5 class="card-title">Información Financiera</h5>
+                                <hr>
+                                <div class="text-center mb-3">
+                                    <h2 class="display-4 text-success">${{ '{:,}'.format(tarjeta.balance|int) }}</h2>
+                                    <p class="text-muted">Saldo Actual</p>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <a href="{{ url_for('tarjetas.recargar_tarjeta') }}" class="btn btn-success">
+                                        <i class="fas fa-money-bill-wave me-2"></i>Recargar Tarjeta
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">Beneficios</h5>
+                        <hr>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <i class="fas fa-percentage text-primary me-2"></i>
+                                <strong>10% de descuento</strong> en todas las boletas
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-ticket-alt text-primary me-2"></i>
+                                Pago rápido y seguro para tus reservas
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-sync-alt text-primary me-2"></i>
+                                Recargas ilimitadas de $50,000
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Volver
+                    </a>
+                    <a href="{{ url_for('reservas.crear_reserva') }}" class="btn btn-primary">
+                        <i class="fas fa-ticket-alt me-2"></i>Crear Reserva
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,183 @@
+/* CineApp Custom Styles */
+
+/* General Styles */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    flex: 1;
+}
+
+/* Card Styles */
+.card {
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.card-header {
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+.card-footer {
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Cinema Seat Styles */
+.cinema-screen {
+    height: 50px;
+    background-color: #ccc;
+    border-radius: 50% / 10%;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.seat-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.seat-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.row-label {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.seat {
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.seat:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.seat-available {
+    background-color: #28a745;
+    color: white;
+}
+
+.seat-reserved {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.seat-sold {
+    background-color: #dc3545;
+    color: white;
+}
+
+.seat-selected {
+    background-color: #007bff;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #007bff;
+}
+
+.seat-general {
+    border: 1px solid #28a745;
+}
+
+.seat-preferencial {
+    border: 2px solid #007bff;
+}
+
+/* Form Styles */
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
+
+/* Payment Method Selection */
+.payment-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+
+.payment-option input[type="radio"] + label {
+    cursor: pointer;
+    width: 100%;
+}
+
+.payment-option input[type="radio"]:checked + label .card {
+    box-shadow: 0 0 0 3px var(--bs-primary);
+    transform: scale(1.02);
+}
+
+.payment-option .card {
+    transition: all 0.2s ease;
+}
+
+.payment-option .card:hover {
+    transform: translateY(-5px);
+}
+
+/* Print Styles */
+@media print {
+    .navbar, .footer, .btn, .alert {
+        display: none;
+    }
+    
+    .card {
+        border: none;
+        box-shadow: none;
+    }
+    
+    .card-header, .card-footer {
+        display: none;
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .seat {
+        width: 25px;
+        height: 25px;
+        font-size: 0.7rem;
+    }
+    
+    .row-label {
+        width: 25px;
+        height: 25px;
+    }
+    
+    .seat-row {
+        gap: 5px;
+    }
+}

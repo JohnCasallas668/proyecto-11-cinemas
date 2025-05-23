@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}CineApp - Cancelar Reserva{% endblock %}
+
+{% block page_title %}Cancelar Reserva{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-danger text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-times-circle me-2"></i>Cancelar Reserva
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning mb-4">
+                    <h5><i class="fas fa-exclamation-triangle me-2"></i>Advertencia</h5>
+                    <p class="mb-0">Al cancelar una reserva, todas las sillas asociadas volverán a estar disponibles. Esta acción no se puede deshacer.</p>
+                </div>
+                
+                <form method="POST" action="{{ url_for('reservas.cancelar_reserva') }}">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="form-group mb-4">
+                        {{ form.cedula.label(class="form-label") }}
+                        {{ form.cedula(class="form-control" + (" is-invalid" if form.cedula.errors else ""), placeholder="Ingrese el número de cédula") }}
+                        {% if form.cedula.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.cedula.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Ingrese la cédula asociada a la reserva que desea cancelar.</small>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-danger btn-lg") }}
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Volver
+                    </a>
+                    <a href="{{ url_for('reservas.crear_reserva') }}" class="btn btn-primary">
+                        <i class="fas fa-ticket-alt me-2"></i>Crear Reserva
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

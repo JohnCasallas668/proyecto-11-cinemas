@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}CineApp - Realizar Pago{% endblock %}
+
+{% block page_title %}Realizar Pago{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-money-bill-wave me-2"></i>Realizar Pago
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('pagos.realizar_pago') }}">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="form-group mb-3">
+                        {{ form.cedula.label(class="form-label") }}
+                        {{ form.cedula(class="form-control" + (" is-invalid" if form.cedula.errors else ""), placeholder="Ingrese el número de cédula") }}
+                        {% if form.cedula.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.cedula.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Ingrese la cédula asociada a la reserva que desea pagar.</small>
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        {{ form.payment_method.label(class="form-label") }}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check payment-option">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="cash" value="cash" checked>
+                                    <label class="form-check-label" for="cash">
+                                        <div class="card border-success h-100">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-money-bill-wave fa-2x text-success mb-2"></i>
+                                                <h5>Efectivo</h5>
+                                                <p class="text-muted mb-0">Pago del 100% del valor</p>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check payment-option">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="card" value="card">
+                                    <label class="form-check-label" for="card">
+                                        <div class="card border-primary h-100">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-credit-card fa-2x text-primary mb-2"></i>
+                                                <h5>Tarjeta CINEMAS</h5>
+                                                <p class="text-muted mb-0">10% de descuento</p>
+                                            </div>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        {% if form.payment_method.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.payment_method.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-success btn-lg") }}
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <div class="alert alert-info mb-0">
+                    <h6><i class="fas fa-info-circle me-2"></i>Información</h6>
+                    <p class="mb-0">Al pagar con tarjeta CINEMAS obtendrá un 10% de descuento en el valor total de la reserva. Asegúrese de tener saldo suficiente en su tarjeta.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+    }
+    
+    .payment-option input[type="radio"] + label {
+        cursor: pointer;
+        width: 100%;
+    }
+    
+    .payment-option input[type="radio"]:checked + label .card {
+        box-shadow: 0 0 0 3px var(--bs-primary);
+        transform: scale(1.02);
+    }
+    
+    .payment-option .card {
+        transition: all 0.2s ease;
+    }
+    
+    .payment-option .card:hover {
+        transform: translateY(-5px);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle payment method selection
+        const paymentOptions = document.querySelectorAll('.payment-option input[type="radio"]');
+        
+        paymentOptions.forEach(option => {
+            option.addEventListener('change', function() {
+                // Remove selection from all cards
+                document.querySelectorAll('.payment-option .card').forEach(card => {
+                    card.classList.remove('border-success', 'border-primary');
+                    card.classList.add('border-secondary');
+                });
+                
+                // Add selection to the selected card
+                if (this.value === 'cash') {
+                    this.closest('.payment-option').querySelector('.card').classList.remove('border-secondary');
+                    this.closest('.payment-option').querySelector('.card').classList.add('border-success');
+                } else {
+                    this.closest('.payment-option').querySelector('.card').classList.remove('border-secondary');
+                    this.closest('.payment-option').querySelector('.card').classList.add('border-primary');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

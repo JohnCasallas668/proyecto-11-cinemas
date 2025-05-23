@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}CineApp - Consultar Tarjeta CINEMAS{% endblock %}
+
+{% block page_title %}Consultar Tarjeta CINEMAS{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-search me-2"></i>Consultar Tarjeta CINEMAS
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('tarjetas.consultar_tarjeta') }}">
+                    <div class="form-group mb-4">
+                        <label for="cedula" class="form-label">Cédula</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Ingrese el número de cédula" required>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Buscar
+                            </button>
+                        </div>
+                        <small class="form-text text-muted">Ingrese la cédula asociada a la tarjeta CINEMAS que desea consultar.</small>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="{{ url_for('tarjetas.crear_tarjeta') }}" class="btn btn-success w-100">
+                            <i class="fas fa-plus-circle me-2"></i>Crear Nueva Tarjeta
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{{ url_for('tarjetas.recargar_tarjeta') }}" class="btn btn-primary w-100">
+                            <i class="fas fa-money-bill-wave me-2"></i>Recargar Tarjeta
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

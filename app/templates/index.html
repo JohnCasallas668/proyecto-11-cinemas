@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}CineApp - Sala de Cine{% endblock %}
+
+{% block page_title %}Sala de Cine{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cinema-screen {
+        height: 50px;
+        background-color: #ccc;
+        border-radius: 50% / 10%;
+        margin-bottom: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+    
+    .seat-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .seat-row {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .row-label {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+    
+    .seat {
+        width: 30px;
+        height: 30px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .seat:hover {
+        transform: scale(1.1);
+    }
+    
+    .seat-available {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .seat-reserved {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    
+    .seat-sold {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .seat-general {
+        border: 1px solid #28a745;
+    }
+    
+    .seat-preferencial {
+        border: 2px solid #007bff;
+    }
+    
+    .legend-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h4 class="card-title text-center mb-4">Distribución de Asientos</h4>
+                
+                <!-- Cinema Screen -->
+                <div class="cinema-screen mb-5">
+                    <span>Pantalla</span>
+                </div>
+                
+                <!-- Seats Layout -->
+                <div class="seat-container">
+                    {% for row in ordered_rows %}
+                        <div class="seat-row">
+                            <div class="row-label">{{ row }}</div>
+                            {% for seat in seats_by_row[row] %}
+                                <div class="seat seat-{{ seat.seat_type.lower() }} 
+                                            {% if seat.status == SeatStatus.AVAILABLE.value %}
+                                                seat-available
+                                            {% elif seat.status == SeatStatus.RESERVED.value %}
+                                                seat-reserved
+                                            {% else %}
+                                                seat-sold
+                                            {% endif %}"
+                                     data-seat-id="{{ seat.id }}"
+                                     data-seat-row="{{ seat.row }}"
+                                     data-seat-number="{{ seat.number }}"
+                                     data-seat-type="{{ seat.seat_type }}"
+                                     data-seat-price="{{ seat.price }}"
+                                     data-bs-toggle="tooltip"
+                                     title="{{ seat.row }}{{ seat.number }} - {{ seat.seat_type }} - ${{ seat.price }}">
+                                    {{ seat.number }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Legend -->
+                <div class="legend-container">
+                    <div class="legend-item">
+                        <div class="legend-color seat-available"></div>
+                        <span>Disponible</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color seat-reserved"></div>
+                        <span>Reservada</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color seat-sold"></div>
+                        <span>Vendida</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="border: 1px solid #28a745; background-color: white;"></div>
+                        <span>General - $8,000</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="border: 2px solid #007bff; background-color: white;"></div>
+                        <span>Preferencial - $11,000</span>
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="row mt-5">
+                    <div class="col-md-6 mb-3">
+                        <a href="{{ url_for('reservas.crear_reserva') }}" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-ticket-alt me-2"></i>Crear Reserva
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="{{ url_for('pagos.realizar_pago') }}" class="btn btn-success btn-lg w-100">
+                            <i class="fas fa-money-bill-wave me-2"></i>Realizar Pago
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>
+{% endblock %}

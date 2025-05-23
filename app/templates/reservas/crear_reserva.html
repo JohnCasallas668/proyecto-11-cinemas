@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+
+{% block title %}CineApp - Crear Reserva{% endblock %}
+
+{% block page_title %}Crear Reserva{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cinema-screen {
+        height: 50px;
+        background-color: #ccc;
+        border-radius: 50% / 10%;
+        margin-bottom: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+    
+    .seat-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .seat-row {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .row-label {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+    
+    .seat {
+        width: 30px;
+        height: 30px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .seat:hover {
+        transform: scale(1.1);
+    }
+    
+    .seat-available {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .seat-reserved {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    
+    .seat-sold {
+        background-color: #dc3545;
+        color: white;
+    }
+    
+    .seat-selected {
+        background-color: #007bff;
+        color: white;
+        transform: scale(1.1);
+    }
+    
+    .seat-general {
+        border: 1px solid #28a745;
+    }
+    
+    .seat-preferencial {
+        border: 2px solid #007bff;
+    }
+    
+    .legend-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+    }
+    
+    .reservation-summary {
+        position: sticky;
+        top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chair me-2"></i>Selección de Asientos
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- Cinema Screen -->
+                <div class="cinema-screen mb-5">
+                    <span>Pantalla</span>
+                </div>
+                
+                <!-- Seats Layout -->
+                <div class="seat-container">
+                    {% for row in "ABCDEFGHIJK" %}
+                        <div class="seat-row">
+                            <div class="row-label">{{ row }}</div>
+                            {% for number in range(1, 21) %}
+                                {% set is_available = true %}
+                                {% set seat_id = None %}
+                                {% set db_seat = None %}
+                                
+                                <!-- Debug: Looking for seat {{ row }}{{ number }} -->
+                                {% set seat_key = row ~ number %}
+                                {% set db_seat = seats_dict.get(seat_key) %}
+                                
+                                {% if db_seat %}
+                                    <!-- Found seat: {{ db_seat.row }}{{ db_seat.number }} - Status: {{ db_seat.status }} - Type: {{ db_seat.seat_type }} -->
+                                    {% if db_seat.status == SeatStatus.AVAILABLE.value %}
+                                        <div class="seat seat-{{ db_seat.seat_type.lower() }} seat-available"
+                                             data-seat-id="{{ db_seat.id }}"
+                                             data-seat-row="{{ db_seat.row }}"
+                                             data-seat-number="{{ db_seat.number }}"
+                                             data-seat-type="{{ db_seat.seat_type }}"
+                                             data-seat-price="{{ db_seat.price }}"
+                                             data-bs-toggle="tooltip"
+                                             title="{{ db_seat.row }}{{ db_seat.number }} - {{ db_seat.seat_type }} - ${{ db_seat.price }}">
+                                            {{ number }}
+                                        </div>
+                                    {% elif db_seat.status == SeatStatus.RESERVED.value %}
+                                        <div class="seat seat-{{ db_seat.seat_type.lower() }} seat-reserved"
+                                             data-bs-toggle="tooltip"
+                                             title="{{ db_seat.row }}{{ db_seat.number }} - {{ db_seat.status }}"
+                                             style="cursor: not-allowed;">
+                                            {{ number }}
+                                        </div>
+                                    {% else %}
+                                        <div class="seat seat-{{ db_seat.seat_type.lower() }} seat-sold"
+                                             data-bs-toggle="tooltip"
+                                             title="{{ db_seat.row }}{{ db_seat.number }} - {{ db_seat.status }}"
+                                             style="cursor: not-allowed;">
+                                            {{ number }}
+                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    <!-- Seat not found in database, show as error -->
+                                    {% set seat_type = "General" if row in "ABCDEFGH" else "Preferencial" %}
+                                    <div class="seat seat-{{ seat_type.lower() }} seat-sold"
+                                         data-bs-toggle="tooltip"
+                                         title="{{ row }}{{ number }} - Error: Asiento no encontrado"
+                                         style="cursor: not-allowed;">
+                                        {{ number }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Legend -->
+                <div class="legend-container">
+                    <div class="legend-item">
+                        <div class="legend-color seat-available"></div>
+                        <span>Disponible</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color seat-selected"></div>
+                        <span>Seleccionada</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color seat-sold"></div>
+                        <span>No Disponible</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="border: 1px solid #28a745; background-color: white;"></div>
+                        <span>General - $8,000</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="border: 2px solid #007bff; background-color: white;"></div>
+                        <span>Preferencial - $11,000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow reservation-summary">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-ticket-alt me-2"></i>Resumen de Reserva
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('reservas.crear_reserva') }}" id="reservationForm">
+                    {{ form.csrf_token }}
+                    <input type="hidden" name="selected_seats" id="selectedSeatsInput" value="">
+                    
+                    <div class="form-group mb-3">
+                        {{ form.cedula.label(class="form-label") }}
+                        {{ form.cedula(class="form-control" + (" is-invalid" if form.cedula.errors else ""), placeholder="Ingrese el número de cédula") }}
+                        {% if form.cedula.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.cedula.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Asientos Seleccionados</h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush" id="selectedSeatsList">
+                                <li class="list-group-item text-center text-muted">
+                                    <em>No hay asientos seleccionados</em>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Total Asientos:</span>
+                            <span id="totalSeats">0</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Total a Pagar:</span>
+                            <span id="totalPrice">$0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning" id="maxSeatsWarning" style="display: none;">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Solo puede reservar hasta 8 asientos.
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-success btn-lg", id="submitReservation", disabled=true) }}
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <div class="alert alert-info mb-0">
+                    <h6><i class="fas fa-info-circle me-2"></i>Información</h6>
+                    <p class="mb-0">Puede seleccionar hasta 8 asientos. Haga clic en los asientos disponibles para seleccionarlos.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tooltips
+        try {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+        } catch (e) {
+            console.error('Error initializing tooltips:', e);
+        }
+        
+        // Variables
+        const maxSeats = 8;
+        let selectedSeats = [];
+        const selectedSeatsInput = document.getElementById('selectedSeatsInput');
+        const selectedSeatsList = document.getElementById('selectedSeatsList');
+        const totalSeatsElement = document.getElementById('totalSeats');
+        const totalPriceElement = document.getElementById('totalPrice');
+        const submitButton = document.getElementById('submitReservation');
+        const maxSeatsWarning = document.getElementById('maxSeatsWarning');
+        const reservationForm = document.getElementById('reservationForm');
+        
+        // Verificar que todos los elementos existan
+        if (!selectedSeatsInput || !selectedSeatsList || !totalSeatsElement || 
+            !totalPriceElement || !submitButton || !maxSeatsWarning || !reservationForm) {
+            console.error('Algunos elementos del DOM no fueron encontrados');
+            return;
+        }
+        
+        // Limpiar el valor inicial del input de asientos seleccionados
+        selectedSeatsInput.value = '';
+        
+        // Add click event to all available seats
+        document.querySelectorAll('.seat-available').forEach(seat => {
+            seat.addEventListener('click', function() {
+                const seatId = this.dataset.seatId;
+                const seatRow = this.dataset.seatRow;
+                const seatNumber = this.dataset.seatNumber;
+                const seatType = this.dataset.seatType;
+                const seatPrice = parseInt(this.dataset.seatPrice || 0);
+                
+                if (!seatId || !seatRow || !seatNumber || !seatType) {
+                    console.error('Datos de asiento incompletos:', this.dataset);
+                    return;
+                }
+                
+                // Check if seat is already selected
+                const seatIndex = selectedSeats.findIndex(s => s.id === seatId);
+                
+                if (seatIndex === -1) {
+                    // Add seat if not already selected and not exceeding max seats
+                    if (selectedSeats.length < maxSeats) {
+                        selectedSeats.push({
+                            id: seatId,
+                            row: seatRow,
+                            number: seatNumber,
+                            type: seatType,
+                            price: seatPrice
+                        });
+                        this.classList.add('seat-selected');
+                        this.classList.remove('seat-available');
+                    } else {
+                        maxSeatsWarning.style.display = 'block';
+                        setTimeout(() => {
+                            maxSeatsWarning.style.display = 'none';
+                        }, 3000);
+                    }
+                } else {
+                    // Remove seat if already selected
+                    selectedSeats.splice(seatIndex, 1);
+                    this.classList.remove('seat-selected');
+                    this.classList.add('seat-available');
+                    maxSeatsWarning.style.display = 'none';
+                }
+                
+                updateSummary();
+            });
+        });
+        
+        // Validar el formulario antes de enviar
+        reservationForm.addEventListener('submit', function(event) {
+            if (!selectedSeatsInput.value) {
+                event.preventDefault();
+                alert('Debe seleccionar al menos un asiento');
+                return false;
+            }
+            return true;
+        });
+        
+        // Update reservation summary
+        function updateSummary() {
+            // Update hidden input
+            selectedSeatsInput.value = selectedSeats.map(seat => seat.id).join(',');
+            
+            // Update selected seats list
+            if (selectedSeats.length === 0) {
+                selectedSeatsList.innerHTML = `
+                    <li class="list-group-item text-center text-muted">
+                        <em>No hay asientos seleccionados</em>
+                    </li>
+                `;
+            } else {
+                selectedSeatsList.innerHTML = '';
+                selectedSeats.forEach(seat => {
+                    selectedSeatsList.innerHTML += `
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-${seat.type === 'General' ? 'success' : 'primary'} me-2">${seat.row}${seat.number}</span>
+                                ${seat.type}
+                            </div>
+                            <span>$${seat.price.toLocaleString()}</span>
+                        </li>
+                    `;
+                });
+            }
+            
+            // Update totals
+            const totalSeats = selectedSeats.length;
+            const totalPrice = selectedSeats.reduce((sum, seat) => sum + seat.price, 0);
+            
+            totalSeatsElement.textContent = totalSeats;
+            totalPriceElement.textContent = `$${totalPrice.toLocaleString()}`;
+            
+            // Enable/disable submit button
+            submitButton.disabled = totalSeats === 0;
+            
+            // Log para depuración
+            console.log('Asientos seleccionados:', selectedSeats);
+            console.log('Valor del input:', selectedSeatsInput.value);
+        }
+    });
+</script>
+{% endblock %}
