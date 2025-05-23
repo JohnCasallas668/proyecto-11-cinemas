@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # CineApp - Sistema de Administración de Sala de Cine
 
 CineApp es una aplicación web desarrollada con Flask y Bootstrap 5 que permite administrar una sala de cine, gestionar reservas, tarjetas de descuento y pagos.
@@ -102,3 +103,13 @@ cineapp/
 ## Licencia
 Este proyecto está bajo la Licencia MIT.
 proyecto-11-cinemas
+=======
+# proyecto-11-cinemas-Grupo 3
+
+### John Casallas
+### James Sarmiento
+### Filiph Suan
+
+# Tecnología en construcción de software
+
+>>>>>>> 4c44c3bf1e10b76be9851c593b3b10db0020c0c3
